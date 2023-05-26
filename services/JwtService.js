@@ -10,6 +10,11 @@ class JwtService {
         // Keep secret secure in .env file
         return jwt.sign(payload, secret, { expiresIn: expiry });
     }
+
+    // Validate the received Jwt Token for correctness
+    static verify(token, secret = JWT_SECRET) {
+        return jwt.verify(token, secret);
+    }
 }
 
 export default JwtService;

@@ -31,7 +31,7 @@ const loginController = {
             }
 
             // Token
-            const access_token = JwtService.sign({_id: result._id, role: result.role });
+            const access_token = JwtService.sign({_id: user._id, role: user.role });
 
             // { key: value} same -> {key}
             res.json({access_token});
