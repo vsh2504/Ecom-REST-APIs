@@ -3,6 +3,7 @@ import { APP_PORT, DB_URL } from './config';
 import routes from './routes';
 import errorHandler from './middlewares/errorHandler';
 import mongoose from 'mongoose';
+import path from 'path';
 
 const app = express()
 
@@ -20,6 +21,11 @@ db.once('open', () => {
 }).catch(err => {
     console.log('Connection failed...')
 });
+
+// Global vars
+global.appRoot = path.resolve(__dirname);
+
+app.use(express.urlencoded({ extended: false }));
 
 // By default in express, json data is disabled that its receives
 // We need to enable it using express' inbuilt middleware
