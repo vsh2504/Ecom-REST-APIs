@@ -35,6 +35,9 @@ app.use(express.json());
 // Prefix '/api' before all routes
 app.use('/api', routes);
 
+// Use static middleware to define a route mapped to a folder
+app.use('/uploads', express.static('uploads'));
+
 // Always register for middlewares.
 // Do it in the last after everything is setup
 app.use(errorHandler);
