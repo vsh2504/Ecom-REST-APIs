@@ -2,6 +2,7 @@ import express from 'express';
 // import registerController from '../controllers/auth/registerController'; (Introduced a index.js to make imports easy)
 import { registerController, loginController, userController, refreshController, productController } from '../controllers';
 import auth from '../middlewares/auth';
+import admin from '../middlewares/admin';
 
 // Here we will use a new thing called express Router for defining routes
 const router = express.Router();
@@ -13,6 +14,7 @@ router.get('/me', auth, userController.me);             // Auth middleware to pa
 router.post('/refresh', refreshController.refresh)
 router.post('/logout', auth, loginController.logout);
 
-router.post('/products', productController.store);
+router.post('/products', [auth, admin], productController.store);
+router.put('/products/:id', [auth, admin], productController.update);
 
 export default router;

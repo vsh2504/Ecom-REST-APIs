@@ -4,6 +4,7 @@ import path from 'path';
 import CustomErrorHandler from "../services/CustomErrorHandler";
 import fs from "fs";
 import Joi from "joi";
+import productSchema from "../validators/productValidator";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
@@ -28,13 +29,7 @@ const productController = {
             const filePath = req.file.path;
 
             // Validation
-            const refreshSchema = Joi.object({
-                name: Joi.string().required(),
-                price: Joi.number().required(),
-                size: Joi.string().required(),
-            });
-
-            const { error } = loginSchema.validate(req.body);
+            const { error } = productSchema.validate(req.body);
 
             if (error) {
                 // Delete the uploaded image file
@@ -58,6 +53,53 @@ const productController = {
                     size,
                     image: filePath
                 })
+            } catch(err) {
+                return next(err);
+            }
+            
+            // Whenever a document is created/saved send 201
+            res.status(201).json(document);
+        });
+    },
+    update(req, res, next) {
+        handleMultipartData(req, res, async (err) => {
+            if (err) {
+                return next(CustomErrorHandler.serverError(err.message))
+            }
+            // Multer will make this file property available on request object
+            let filePath;
+            if(req.file){
+                filePath = req.file.path;
+            }
+            
+            // Validation
+            const { error } = productSchema.validate(req.body);
+
+            if (error) {
+                // If file passed, must be present as prop in req object
+                // Delete the uploaded image file
+                // rootfolder/uploads/filename.png
+                if(req.file){
+                    fs.unlink(`${appRoot}/${filepPath}`, (err) => {
+                        if(err){
+                            return next(CustomErrorHandler.serverError(err.message));
+                        }             
+                    });
+                }
+
+                return next(error);
+            }
+
+            const { name, price, size } = req.body;
+            let document;
+
+            try {
+                document = await Product.findOneAndUpdate({ _id: req.params.id }, {
+                    name,
+                    price,
+                    size,
+                    ...(req.file && { image: filePath })
+                }, {new: true}); // So that we get the new updated data
             } catch(err) {
                 return next(err);
             }
