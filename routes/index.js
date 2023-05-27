@@ -11,5 +11,6 @@ router.post('/register', registerController.register);
 router.post('/login', loginController.login);
 router.get('/me', auth, userController.me);             // Auth middleware to parse the header bearer token & pass it to userController to validate
 router.post('/refresh', refreshController.refresh)
+router.post('/logout', auth, loginController.logout);
 
 export default router;

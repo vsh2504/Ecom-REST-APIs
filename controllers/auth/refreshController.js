@@ -41,15 +41,15 @@ const refreshController = {
             }
 
             // tokens
-             // Acces Token
-             const access_token = JwtService.sign({_id: user._id, role: user.role });
-             // Generate refresh token
-             const refresh_token = JwtService.sign({ _id: user._id, role: user.role }, '1y', REFRESH_SECRET);
-             // Database whitelist
-             await RefreshToken.create({ token: refresh_token });
- 
-             // { key: value} same -> {key}
-             res.json({ access_token, refresh_token });
+            // Acces Token
+            const access_token = JwtService.sign({_id: user._id, role: user.role });
+            // Generate refresh token
+            const refresh_token = JwtService.sign({ _id: user._id, role: user.role }, '1y', REFRESH_SECRET);
+            // Database whitelist
+            await RefreshToken.create({ token: refresh_token });
+
+            // { key: value} same -> {key}
+            res.json({ access_token, refresh_token });
         } catch (err) {
             return next(new Error('Something went wrong! ' + err.message));
         }
