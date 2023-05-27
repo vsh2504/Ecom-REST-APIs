@@ -1,9 +1,10 @@
 import Joi from 'joi'
 import CustomErrorHandler from '../../services/CustomErrorHandler';
-import { User } from '../../models';
+import { RefreshToken, User } from '../../models';
 import bcrypt from 'bcrypt';
 import JwtService from '../../services/JwtService';
 import CustomErrorHandler from '../../services/CustomErrorHandler';
+import { REFRESH_SECRET } from '../../config';
 
 const registerController = {
     async register(req, res, next) {
@@ -58,6 +59,7 @@ const registerController = {
 
         // Save the user inside the collection
         let access_token;
+        let refresh_token;
         try {
             const result = await user.save();
 
@@ -69,11 +71,15 @@ const registerController = {
             // In Payload we want to keep an obj with user's id, role as we want to check some things in future.
             access_token = JwtService.sign({ _id: result._id, role: result.role });       // let, const are block level access only
 
+            // Generate refresh token
+            refresh_token = JwtService.sign({ _id: result._id, role: result.role }, '1y', REFRESH_SECRET);
+            // Database whitelist
+            await RefreshToken.create({ token: refresh_token });
         } catch(err) {
             return next(err);
         }
 
-        res.json({ access_token: access_token });
+        res.json({ access_token: access_token, refresh_token: refresh_token });
     }
 }
 

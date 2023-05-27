@@ -1,6 +1,6 @@
 import express from 'express';
 // import registerController from '../controllers/auth/registerController'; (Introduced a index.js to make imports easy)
-import { registerController, loginController, userController } from '../controllers';
+import { registerController, loginController, userController, refreshController } from '../controllers';
 import auth from '../middlewares/auth';
 
 // Here we will use a new thing called express Router for defining routes
@@ -10,5 +10,6 @@ const router = express.Router();
 router.post('/register', registerController.register);
 router.post('/login', loginController.login);
 router.get('/me', auth, userController.me);             // Auth middleware to parse the header bearer token & pass it to userController to validate
+router.post('/refresh', refreshController.refresh)
 
 export default router;
